@@ -6,12 +6,11 @@ This app fetches data either from the **public Wizard World API** or from a **cu
 
 ---
 
-## 🛠️ Tech Stack
-
+## 🔧 Technologies Used
+- **React**
 - **Next.js**
 - **TypeScript**
 - **Axios**
-- **Tailwind CSS**
 
 ---
 
