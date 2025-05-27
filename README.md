@@ -11,7 +11,7 @@ This app fetches data either from the **public Wizard World API** or from a **cu
 - **Next.js**
 - **TypeScript**
 - **Axios**
-Check the `package.json` file for the full list of dependencies and their versions.
+- Check the `package.json` file for the full list of dependencies and their versions.
 
 
 ---
