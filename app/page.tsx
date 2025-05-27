@@ -1,95 +1,71 @@
-import Image from "next/image";
+'use client';
+
 import styles from "./page.module.css";
+import InputField from "../components/SearchBars/InputHouse"
+import HouseCard from "../components/house/HouseCard";
+import { useState } from "react";
+import { House } from "../types/house";
+import React from "react";
+import {fetchHouses} from "../services/API_Calls/houseService";
 
-export default function Home() {
+
+export default function HousePage() {
+  //State to hold the search term
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  //State for all houses
+  const [houses, setHouses] = useState<House[]>([]);
+  //State for pages (for pagination)
+  const [page, setPage] = useState<number>(1);
+  //State to check if there are more houses to load. This helps to stop loading more houses when there are no more left
+  const [hasMore, setHasMore] = useState<boolean>(true);
+  //Limit (number of houses per page)
+  const limit = 2;
+
+    React.useEffect(() => {
+      fetchHouses({ searchTerm, page, limit }).then(newData => {
+        //If it's the first page, replace the houses, otherwise append to the existing list
+        setHouses(prev => page === 1 ? newData : [...prev, ...newData]);
+        //If the number of new houses is less than the limit, there are no more houses to load
+        setHasMore(newData.length === limit);
+      });
+    }, [searchTerm, page]); //Run every time searchTerm or page changes
+
+    // Function to handle page change while the user scrolls
+    React.useEffect(() => {
+      const handleScroll = () => {
+        //If the user scrolls to the bottom of the page, load more houses - If the visible height of the page 
+        //plus the amount the user has scrolled is greater than or equal to the total height of the page, 
+        //then the user has reached the bottom of the page
+        //+1 to avoid inccorect rouding
+        if (window.innerHeight + document.documentElement.scrollTop + 1 >= document.documentElement.scrollHeight) {
+          //If there are more houses to load, increment the page
+          if(hasMore) {
+            setPage(prevPage => prevPage + 1);
+          }
+        }
+      };
+  
+      //Add the scroll event listener
+      window.addEventListener('scroll', handleScroll);
+
+      //Clean up the event listener when the component unmounts or hasMore changes
+      //This prevents memory leaks and ensures that the event listener is not added multiple times
+      return () => window.removeEventListener('scroll', handleScroll);
+    }, [hasMore]); //Run every time hasMore changes
+
+  if (!houses) return null;
+
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol>
-          <li>
-            Get started by editing <code>app/page.tsx</code>.
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.secondary}
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className={styles.footer}>
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+    <div className={styles.container}>
+      <div>
+        <InputField searchTerm={searchTerm} setSearchTerm={setSearchTerm}></InputField>
+      </div>
+      <div>
+        {houses.map((house) => (
+          <HouseCard key={house.id} house={house} /> //Key because we are mapping over an array
+        ))}
+      </div>
     </div>
   );
+
 }

@@ -1,0 +1,9 @@
+.traits_box {
+    margin-bottom: -10px;
+    padding:5px;
+    border: 1px solid #3B3B3B;
+    background-color: #3B3B3B;
+    color: white;
+    font-size: 13px;
+    border-radius: 10px;
+}
