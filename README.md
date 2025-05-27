@@ -2,7 +2,7 @@
 
 A simple, responsive frontend built with **React**, **Next.js** and **TypeScript**, providing a user-friendly interface to display magical houses.
 
-This app fetches data either from the **public Wizard World API** or from a **custom backend API** that replicates the structure of the public one — giving you full control over your data source.
+This app fetches data either from the public [Wizard World API](https://wizard-world-api.herokuapp.com/houses) or from a **custom backend API** that replicates the structure of the public one — giving you full control over your data source.
 
 The public Wizard World API does not properly support filtering houses by name. Searching for a single house works correctly only with the local backend.
 
